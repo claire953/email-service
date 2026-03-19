@@ -1,7 +1,10 @@
 const express = require("express");
+const cors = require("cors");
 const SibApiV3Sdk = require("sib-api-v3-sdk");
 
 const app = express();
+
+app.use(cors());
 app.use(express.json());
 
 // Brevo setup
@@ -22,16 +25,19 @@ app.post("/send-email", async (req, res) => {
     const tranEmailApi = new SibApiV3Sdk.TransactionalEmailsApi();
 
     const response = await tranEmailApi.sendTransacEmail({
-      sender: { email: "claire@hardynutritionals.com" },
+      sender: { email: "claire@hardynutritionals.com", name: "Claire" },
       to: [{ email: to }],
       subject: subject,
-      htmlContent: html,
+      htmlContent: html
     });
 
     res.json({ success: true, response });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Email failed" });
+    res.status(500).json({
+      error: "Email failed",
+      details: error.message
+    });
   }
 });
 
